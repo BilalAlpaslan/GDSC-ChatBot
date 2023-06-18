@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API İstek Örneği</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <button onclick="sendRequest()">Promptu aç</button>
+    <br>
+    <p id="response"></p>
+    <script>
+        function sendRequest() {
+            var inputValue = prompt("Bir değer girin:");
+            if (inputValue) {
+                var url = window.location.href + "questions";
+
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        content: inputValue
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("response").innerHTML = data.predictions[0].candidates[0].content
+                })
+                .catch(error => {
+                    alert("Bir hata oluştu.");
+                });
+            }
+        }
+    </script>
+</body>
+</html>

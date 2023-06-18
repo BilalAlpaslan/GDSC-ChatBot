@@ -1,6 +1,6 @@
 import os
-from typing import Union
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import requests
@@ -15,14 +15,13 @@ app = FastAPI()
 
 
 class Question(BaseModel):
-    q: str
-    a: Union[str, None] = None
+    content: str
 
 
 def get_ai_response(question: Question):
     r = requests.post(
         f"https://{API_ENDPOINT}/v1/projects/{PROJECT_ID}/locations/us-central1/publishers/google/models/{MODEL_ID}:predict",
-        headers={"Authorization": f"Bearer {ACCESS_TOKEN}"},
+        headers={"Authorization": "Bearer " + ACCESS_TOKEN},
         json={
             "instances": [
                 {
@@ -42,7 +41,7 @@ def get_ai_response(question: Question):
                     "messages": [
                         {
                             "author": "user",
-                            "content": question.q
+                            "content": question.content
                         }
                     ]
                 }
@@ -65,6 +64,15 @@ def get_questions(q: Question):
         return res
     except Exception as e:
         return {"error": str(e)}
+
+
+@app.get("/")
+def home():
+    html = ""
+    with open("index.html", encoding="utf-8") as f:
+        html = f.read()
+
+    return HTMLResponse(content=html, status_code=200)
 
 
 if __name__ == "__main__":
