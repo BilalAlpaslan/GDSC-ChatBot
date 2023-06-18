@@ -1,2 +1,2 @@
 fastapi
-dotenv
+dotenv-python
