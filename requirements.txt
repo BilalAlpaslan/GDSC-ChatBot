@@ -1,2 +1,3 @@
 fastapi
 dotenv-python
+uvicorn
